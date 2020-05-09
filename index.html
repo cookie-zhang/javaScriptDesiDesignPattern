@@ -1,19 +1,151 @@
 <!--
  * @Author: your name
  * @Date: 2020-05-07 11:10:00
- * @LastEditTime: 2020-05-07 11:10:15
+ * @LastEditTime: 2020-05-07 16:50:38
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /javaScriptDesiDesignPattern/index.html
  -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>js设计模式</title>
 </head>
+
 <body>
     <h1>javaScriptDesiDesignPattern</h1>
 </body>
+
 </html>
+<script>
+    // 策略模式
+    // old
+    // function checkAuth(data) {
+    //     if (data.role !== 'juejin') {
+    //         console.log('不是掘金用户');
+    //         return false;
+    //     }
+    //     if (data.grade < 1) {
+    //         console.log('掘金等级小于 1 级');
+    //         return false;
+    //     }
+    //     if (data.job !== 'FE') {
+    //         console.log('不是前端开发');
+    //         return false;
+    //     }
+    //     if (data.type !== 'eat melons') {
+    //         console.log('不是吃瓜群众');
+    //         return false;
+    //     }
+    // }
+
+    // new
+    var sexList = ['man', 'woman']
+    // 策略
+    var strateg = {
+        name: function (value) {
+            if (value === 'iphone') {
+                return true;
+            }
+            return false
+        },
+        age: function (value) {
+            if (value >= 5) {
+                return true;
+            }
+            return false
+        },
+        sex: function (value) {
+            debugger
+            if (sexList.indexOf(value) > 1) {
+                return true
+            }
+            return false
+        }
+
+    }
+
+    // 规则校验
+    var validator = function () {
+        this.cache = []
+
+        // 收集策略事件集合
+        this.add = function (value, method) {
+            this.cache.push(function () {
+                return strateg[method](value)
+            })
+        }
+
+        // 检查
+        this.check = function () {
+            for (let i = 0; i < this.cache.length; i++) {
+                let valiFnItem = this.cache[i]
+                var data = valiFnItem()
+                if (!data) {
+                    return false;
+                }
+            }
+            return true
+        }
+    }
+
+    // 开始调用测试
+    var testOne = function () {
+        var newValidator = new validator()
+        const data = {
+            name: 'iphone',
+            age: 2,
+            sex: 'man'
+        }
+        newValidator.add(data.name, 'name')
+        // newValidator.add(data.age, 'age')
+        newValidator.add(data.sex, 'sex')
+        const result = newValidator.check()
+        return result
+    }
+    console.log(testOne())
+
+
+    // 发布订阅
+    const EventEmit = function () {
+        this.events = {};
+        this.on = function (name, cb) {
+            if (this.events[name]) {
+                this.events[name].push(cb);
+            } else {
+                this.events[name] = [cb];
+            }
+        };
+        this.trigger = function (name, ...arg) {
+            if (this.events[name]) {
+                this.events[name].forEach(eventListener => {
+                    eventListener(...arg);
+                });
+            }
+        };
+    };
+
+    // let event = new EventEmit();
+    // event.trigger('success');
+
+    // MessageCenter.fetch() {
+    //     event.on('success', () => {
+    //         console.log('更新消息中心');
+    //     });
+    // }
+    // Order.update() {
+    //     event.on('success', () => {
+    //         console.log('更新订单信息');
+    //     });
+    // }
+    // Checker.alert() {
+    //     event.on('success', () => {
+    //         console.log('通知管理员');
+    //     });
+    // }
+
+
+</script>
